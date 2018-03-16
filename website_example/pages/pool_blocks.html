@@ -193,7 +193,7 @@ function getBlockRowElement(block, jsonString){
         'unlocked': 'unlocked',
         'orphaned': 'orphaned'
     };
-
+    
     var row = document.createElement('tr');
     row.setAttribute('data-json', jsonString);
     row.setAttribute('data-height', block.height);
@@ -203,7 +203,7 @@ function getBlockRowElement(block, jsonString){
                 
     var reward = "";    
     if(typeof block.reward == "undefined"){
-        reward = "TBA";
+        reward = "Waiting...";
     }
     else{
         reward = getReadableCoins(block.reward, 4, true);
@@ -215,7 +215,7 @@ function getBlockRowElement(block, jsonString){
         '<td class="col3">' + block.height + '</td>' +
         '<td class="col4">' + block.difficulty + '</td>' +
         '<td class="col5">' + formatBlockLink(block.hash) + '</td>' +
-        '<td class="col6">' + formatLuck(block.difficulty, block.shares) + '</td>' +
+        '<td class="col6" title="' + block.shares + ' shares submitted">' + formatLuck(block.difficulty, block.shares) + '</td>' +
         '<td class="col7">' + block.maturity + '</td>';
 
     row.innerHTML = columns;

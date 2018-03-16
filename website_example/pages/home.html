@@ -1,5 +1,5 @@
 <!-- Welcome -->
-<h3>Welcome to our mining pool</h3>
+<h3>Welcome!</h3>
 
 <!-- Statistics -->
 <div id="poolStats" class="row">
@@ -195,33 +195,11 @@
     </div>    
 </div>
 
-<!-- Mining Profit Calculator -->
-<div id="miningProfitCalc">
-    <h3>Estimate Mining Profits</h3>
-    <div id="calcHashHolder">
-        <div class="input-group">
-            <input type="number" class="form-control" id="calcHashRate" placeholder="Enter Your Hash Rate">
-            <div class="input-group-btn">
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" id="calcHashDropdown">
-                    <span id="calcHashUnit" data-mul="1">KH/s</span> <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-right" role="menu" id="calcHashUnits">
-                    <li><a href="#" data-mul="0">H/s</a></li>
-                    <li><a href="#" data-mul="1">KH/s</a></li>
-                    <li><a href="#" data-mul="2">MH/s</a></li>
-                </ul>
-            </div>
-            <span class="input-group-addon">=</span>
-            <span class="input-group-addon" id="calcHashResultsHolder"><span id="calcHashAmount"></span> <span id="calcHashSymbol"></span>/day</span>
-        </div>
-    </div>
-</div>
-
 <!-- Javascript -->
 <script>
 currentPage = {
     destroy: function(){
-        $('#networkLastBlockFound,#poolLastBlockFound,#marketLastUpdated').timeago('dispose');
+        $('#networkLastBlockFound,#poolLastBlockFound').timeago('dispose');
     },
     update: function(){
         $('#networkLastBlockFound').timeago('update', new Date(lastStats.network.timestamp * 1000).toISOString());
@@ -247,28 +225,29 @@ currentPage = {
 
         var totalFee = lastStats.config.fee;
         if (Object.keys(lastStats.config.donation).length) {
+            var totalDonation = 0;
+            for(var i in lastStats.config.donation) {
+                totalDonation += lastStats.config.donation[i];
+            }
             totalFee += totalDonation;
         }
-        updateText('poolFee', floatToString(totalFee) + '%');
+        updateText('poolFee', (totalFee > 0 ? floatToString(totalFee) : '0') + '%');
 
         updateText('paymentsInterval', getReadableTime(lastStats.config.paymentsInterval));
         updateText('paymentsMinimum', getReadableCoins(lastStats.config.minPaymentThreshold, 2));
 
         updateText('blockSolvedTime', getReadableTime(lastStats.network.difficulty / lastStats.pool.hashrate));
-        updateText('calcHashSymbol', lastStats.config.symbol);
         updateText('currentEffort', (lastStats.pool.roundHashes / lastStats.network.difficulty * 100).toFixed(1) + '%');
-
-        calcEstimateProfit();
     }
 };
 
-$('#networkLastBlockFound,#poolLastBlockFound,#marketLastUpdated').timeago();
+$('#networkLastBlockFound,#poolLastBlockFound').timeago();
 
 /* Pool Charts */
 var poolCharts = {
     type: 'line',
     width: '100%',
-    height: '75',
+    height: '120',
     lineColor: '#03a9f4',
     fillColor: 'rgba(3, 169, 244, .4)',
     spotColor: null,
@@ -278,7 +257,7 @@ var poolCharts = {
     spotRadius: 3,
     chartRangeMin: 0,
     drawNormalOnTop: false,
-    tooltipFormat: '<b>{{y}}</b>, {{offset:names}}'
+    tooltipFormat: '<b>{{y}}</b> &ndash; {{offset:names}}'
 };
 
 $(function() {
@@ -288,10 +267,8 @@ $(function() {
 function createCharts(data) {         
     if (data.hasOwnProperty("charts")) {
         var graphData = {
-            profit: getGraphData(data.charts.profit),
-            diff: getGraphData(data.charts.difficulty),
             hashrate: getGraphData(data.charts.hashrate),
-            price: getGraphData(data.charts.price),
+            diff: getGraphData(data.charts.difficulty),
             workers: getGraphData(data.charts.workers)
         };
             
@@ -307,14 +284,14 @@ function createCharts(data) {
     }
 }
 
-function getGraphData (rawData, fixValueToCoins) {
+function getGraphData(rawData, fixValueToCoins) {
     var graphData = {
         names: [],
         values: []
     };
     if(rawData) {
         for (var i = 0, xy; xy = rawData[i]; i++) {
-            graphData.names.push(new Date(xy[0]*1000).toUTCString());
+            graphData.names.push(new Date(xy[0]*1000).toLocaleString());
             graphData.values.push(fixValueToCoins ? getReadableCoins(xy[1], 4, true) : xy[1]);
         }
     }        
@@ -322,38 +299,6 @@ function getGraphData (rawData, fixValueToCoins) {
     return graphData;
 }
 
-function loadStatistics () {        
-    $.get(api + '/stats', function (stats) {
-        if (stats) {
-            showStats(stats)
-        }
-    });      
-}
-
-function showStats (stats) {
-    if (stats.hasOwnProperty('charts')) {
-        var priceData = stats.charts.price;
-        $('#cur_price').text(priceData ? priceData[priceData.length-1][1] : '---'); 
-    }
-    if (stats.hasOwnProperty('charts')) {
-        var profitValue;
-        var profitData = stats.charts.profit;
-
-        if (profitData) {
-            profitValue = profitData[profitData.length-1][1];
-            if (profitValue) {
-                profitValue = profitValue.toPrecision(3).toString().replace(/(.*?)e(\+|\-)(\d+)/, '$1<sup>10<sup>$2$3</sup></sup>');
-            }
-            else {
-                profitValue = '---';
-            }
-        }
-        else {
-            profitValue = '---';
-        }
-    }
-}
-    
 var xhrRenderCharts;
 
 $(function(){
@@ -362,28 +307,5 @@ $(function(){
         cache: false,            
         success: createCharts
     });               
-});
-    
-/* Hash Profitability Calculator */
-$('#calcHashRate').keyup(calcEstimateProfit).change(calcEstimateProfit);
-
-$('#calcHashUnits > li > a').click(function(e){
-    e.preventDefault();
-    $('#calcHashUnit').text($(this).text()).data('mul', $(this).data('mul'));
-    calcEstimateProfit();
-});
-
-function calcEstimateProfit(){
-    try {
-        var rateUnit = Math.pow(1000,parseInt($('#calcHashUnit').data('mul')));
-        var hashRate = parseFloat($('#calcHashRate').val()) * rateUnit;
-        var profit = (hashRate * 86400 / lastStats.network.difficulty) * lastStats.network.reward;
-        if (profit) {
-            updateText('calcHashAmount', getReadableCoins(profit, 2, true));
-            return;
-        }
-    }
-    catch(e){ }
-    updateText('calcHashAmount', '');
-}
+});    
 </script>

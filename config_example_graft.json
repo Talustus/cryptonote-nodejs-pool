@@ -3,6 +3,7 @@
     "symbol": "GRFT",
     "coinUnits": 10000000000,
     "coinDifficultyTarget": 120,
+    "moneroVariant": false,
 
     "logging": {
         "files": {
@@ -22,39 +23,51 @@
         "poolAddress": "GBqRuitSoU3PFPBAkXMEnLdBRWXH4iDSD6RDxnQiEFjVJhWUi1UuqfV5EzosmaXgpPGE6JJQjMYhZZgWY8EJQn8jQTsuTit",
         "blockRefreshInterval": 1000,
         "minerTimeout": 900,
+        "sslCert": "./cert.pem",
+        "sslKey": "./privkey.pem",
+        "sslCA": "./chain.pem",
         "ports": [
             {
                 "port": 3333,
-                "difficulty": 2000,
+                "difficulty": 5000,
                 "desc": "Low end hardware"
             },
             {
-                "port": 5555,
-                "difficulty": 10000,
+                "port": 4444,
+                "difficulty": 15000,
                 "desc": "Mid range hardware"
             },
             {
-                "port": 7777,
-                "difficulty": 20000,
+                "port": 5555,
+                "difficulty": 25000,
                 "desc": "High end hardware"
             },
             {
-                "port": 9999,
+                "port": 7777,
                 "difficulty": 500000,
-                "desc": "Nice Hash"
+                "desc": "Cloud-mining / NiceHash"
+            },
+            {
+                "port": 9999,
+                "difficulty": 20000,
+                "desc": "SSL connection",
+                "ssl": true
             }
         ],
         "varDiff": {
             "minDiff": 100,
             "maxDiff": 100000000,
-            "targetTime": 100,
+            "targetTime": 60,
             "retargetTime": 30,
             "variancePercent": 30,
             "maxJump": 100
         },
+        "paymentId": {
+            "addressSeparator": "."
+        },
         "fixedDiff": {
             "enabled": true,
-            "addressSeparator": "."
+            "addressSeparator": "+"
         },
         "shareTrust": {
             "enabled": true,
@@ -82,7 +95,10 @@
         "interval": 300,
         "maxAddresses": 50,
         "mixin": 5,
+        "priority": 0,
         "transferFee": 4000000000,
+        "dynamicTransferFee": true,
+        "minerPayFee" : true,
         "minPayment": 100000000000,
         "maxTransactionAmount": 0,
         "denomination": 10000000000
@@ -103,7 +119,13 @@
         "port": 8117,
         "blocks": 30,
         "payments": 30,
-        "password": "your_password"
+        "password": "your_password",
+        "ssl": false,
+        "sslPort": 8119,
+        "sslCert": "./cert.pem",
+        "sslKey": "./privkey.pem",
+        "sslCA": "./chain.pem",
+        "trustProxyIP": false
     },
 
     "daemon": {
@@ -122,6 +144,33 @@
         "auth": null
     },
 
+    "email": {
+        "enabled": false,
+        "templateDir": "email_templates",
+        "templates": ["worker_connected", "worker_banned", "worker_timeout"],
+        "variables": {
+            "POOL_HOST": "poolhost.com"
+        },
+        "fromAddress": "your@email.com",
+        "transport": "sendmail",
+        "sendmail": {
+            "path": "/usr/sbin/sendmail"
+        },
+        "smtp": {
+            "host": "smtp.example.com",
+            "port": 587,
+            "secure": false,
+            "auth": {
+                "user": "username",
+                "pass": "password"
+            }
+        },
+        "mailgun": {
+            "key": "your-private-key",
+            "domain": "mg.yourdomain"
+        }
+    },
+    
     "monitoring": {
         "daemon": {
             "checkInterval": 60,
@@ -133,6 +182,11 @@
         }
     },
 
+    "prices": {
+        "source": "tradeogre",
+        "currency": "USD"
+    },
+    
     "charts": {
         "pool": {
             "hashrate": {
@@ -148,6 +202,18 @@
                 "maximumPeriod": 86400
             },
             "difficulty": {
+                "enabled": true,
+                "updateInterval": 1800,
+                "stepInterval": 10800,
+                "maximumPeriod": 604800
+            },
+            "price": {
+                "enabled": true,
+                "updateInterval": 1800,
+                "stepInterval": 10800,
+                "maximumPeriod": 604800
+            },
+            "profit": {
                 "enabled": true,
                 "updateInterval": 1800,
                 "stepInterval": 10800,

@@ -3,11 +3,11 @@
 @import url(//fonts.googleapis.com/css?family=Inconsolata);
 
 body {  
-  background-color: #262626;
-  background-image: url(/themes/img/bg-dark.png);
+  background-color: #fff;
+  background-image: url(/themes/img/bg-light.png);
   font-family: 'Roboto', Helvetica, Arial, sans-serif;
   line-height: 1.428571429;
-  color: #fff;
+  color: #262626;
   margin: 0px;
   padding: 0px;
   margin-bottom: 85px;
@@ -15,13 +15,13 @@ body {
   overflow-y: scroll;
 }
 a {
-  color: #6ED5EE;
+  color: #014e71;
 }
 a:hover {
-  color: #57ceeb;
+  color: #0274a8;
 }
 hr {
-  border-top-color: #d9d9d9;
+  border-top-color: #0274a8;
 }
 strong, b {
   font-weight: 500;
@@ -36,8 +36,8 @@ h3,.h3 {
   margin-bottom: 14px;
 }
 code {
-  color: lightblue;
-  background-color: #3C3C3C;
+  color: #0274a8;
+  background-color: #efefef;
   padding: 2px 10px;
   border-radius: 0;
 }
@@ -84,7 +84,7 @@ footer > div{
   overflow: auto;
   font-size: 16px;
   font-weight: 200;
-  background-color: rgba(38, 38, 38, .3);
+  background-color: rgba(0, 0, 0, .8);
   position: fixed;
   top: 0px;
   width: 225px;
@@ -105,6 +105,7 @@ footer > div{
   color: #fff;
   text-decoration: none;
 }
+
 .nav-side-menu .toggle-btn {
   display: none;
 }
@@ -130,6 +131,10 @@ footer > div{
 .nav-side-menu li .active {
   border-left: 3px solid #03a9f4;
   background-color: #0274a8;
+}
+.nav-side-menu ul .active a,
+.nav-side-menu li .active a {
+  color: #fff;
 }
 .nav-side-menu ul .sub-menu li.active,
 .nav-side-menu li .sub-menu li.active {
@@ -190,6 +195,9 @@ footer > div{
   -o-transition: all 1s ease;
   -ms-transition: all 1s ease;
   transition: all 1s ease;
+}
+.nav-side-menu li:hover a {
+  color: #fff;
 }
 @media (max-width: 991px) {
   .nav-side-menu {
@@ -262,20 +270,20 @@ footer > div{
 /* Bootstrap Buttons */
 .btn-default {
   color: #ffffff;
-  background-color: #1f94b1;
-  border-color: #1f94b1;
+  background-color: #014e71;
+  border-color: #014e71;
 }
 .btn-default:hover, .btn-default:focus, .btn-default:active, .btn-default.active, .open > .dropdown-toggle.btn-default {
   color: #ffffff;
-  background-color: #177086;
-  border-color: #16687d;
+  background-color: #013d58;
+  border-color: #013d58;
 }
 .btn-default.disabled,.btn-default[disabled], fieldset[disabled] .btn-default, .btn-default.disabled:hover, .btn-default[disabled]:hover, fieldset[disabled] .btn-default:hover, .btn-default.disabled:focus, .btn-default[disabled]:focus, fieldset[disabled] .btn-default:focus, .btn-default.disabled:active, .btn-default[disabled]:active, fieldset[disabled] .btn-default:active, .btn-default.disabled.active, .btn-default[disabled].active, fieldset[disabled] .btn-default.active {
-  background-color: #1f94b1;
-  border-color: #1f94b1;
+  background-color: #014e71;
+  border-color: #014e71;
 }
 .btn-default .badge {
-  color: #1f94b1;
+  color: #014e71;
   background-color: #ffffff;
 }
 .btn-primary {
@@ -301,10 +309,11 @@ footer > div{
 }
 
 /* Bootstrap Form Controls */
-.form-control {
-  background-color: #131313;
+.form-control,
+.form-select {
+  background-color: #0274a8;
   color: #00FF33;
-  border: 1px solid #1f94b1; 
+  border: 1px solid #014e71; 
   border-radius: 4px;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
@@ -315,10 +324,24 @@ footer > div{
   box-shadow: none;
   border-color: #177086;
 }
+.form-control::placeholder {
+  color: #efefef;
+}
+.form-select {
+  display: inline-block;
+  width: 100%;
+  padding: .5rem 1.75rem .5rem .75rem;
+  background: #0274a8 url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='%23ffffff' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E") no-repeat right .75rem center;
+  background-size: 8px 10px;
+  vertical-align: middle;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
 .input-group-addon {
-  background-color: #1f94b1;
+  background-color: #014e71;
   color: #fff;
-  border-color: #1f94b1;
+  border-color: #014e71;
 }
 
 /* Bootstrap Tables */
@@ -344,20 +367,23 @@ footer > div{
   background-color: #000000;
 }
 .table > thead > tr > th {
-  color: #20BFFF;
-  border-bottom-color: #20BFFF;
+  color: #014e71;
+  border-bottom-color: #014e71;
   font-weight: 400;
 }
 .table-striped > tbody > tr:nth-child(odd) > td,
 .table-striped > tbody > tr:nth-child(odd) > th {
-  background-color: #202020;
+  background-color: rgba(151, 222, 255, 0.3);
 }
 .table > tbody > tr:hover td,
 .table > tbody > tr:hover th {
-  background-color: #353535;
+  background-color: rgba(3, 169, 244, 0.3);
 }
 .table > tbody > tr > td {
   border-top-color: #c9e0e9;
+}
+table th.sort:hover{
+  cursor: pointer;
 }
 
 /* jQuery sparkline tooltip */
@@ -452,7 +478,6 @@ footer > div{
   font-weight: 800;
   color: #fff;
   padding-right: 8px;
-  text-overflow: ellipsis;
 }
 .hashInfo .content .value a {
   color: #fff;
@@ -465,14 +490,14 @@ footer > div{
 
 /* Pool Statistics */
 .stats > div:not(#addressError) {
-  color: #E6E6E6; 
+  color: #262626; 
   padding: 10px 0px;
 }
 .stats > div:not(#addressError).marketFooter {
   padding: 5px 0;
 }
 .stats > div:not(#addressError) > i.fa {
-  color: #1f94b1; 
+  color: #0274a8;
   font-size: 21px;
   width: 30px;
   text-align: center;
@@ -480,33 +505,51 @@ footer > div{
 .stats > div:not(#addressError) > span:not(.input-group-btn):first-of-type {
   font-weight: 500;
   padding: 0 2px;
-  color: lightblue;
+  color: #0274a8;
 }
 
 /* Pool and Worker Charts */
-.poolChart {
+.poolChart,
+.marketChart {
   padding-top: 15px;
-  dsplay: none;
+  display: none;
   margin-bottom: 10px;
-}
-.poolChart h4 {
-  text-align: center;
-  font-size: 21px;
 }
 .userChart {
   display: none;
 }
+.userChart .chart {
+  margin-bottom: 10px;
+}
+.poolChart h4,
+.marketChart h4,
 .userChart h4 {
   text-align: center;
   font-size: 21px;
 }
-.userChart .chart {
-  margin-bottom: 10px;
+
+/* Market Rates */
+#marketStats  {
+  margin-top: 20px;
+}
+#marketStats .infoBox  {
+  margin-bottom: 15px;
+}
+#marketUpdate {
+    display: none;
 }
 
 /* Mining Profit Calculator */
 #miningProfitCalc{
   margin: 35px 0;
+}
+#miningProfitCalc .input-group-addon{
+  padding: 6px;
+}
+#miningProfitCalc .input-group-addon, 
+#miningProfitCalc .input-group-btn .btn, 
+#miningProfitCalc .input-group .form-control{
+  height:45px;
 }
 #calcHashDropdown{
   border-radius: 0;
@@ -523,13 +566,29 @@ footer > div{
 }
 #calcHashAmount{
   font-family: 'Inconsolata', monospace;
+  display: inline-block;
+  text-align: center;
+  vertical-align: middle;
+  overflow: hidden;
+}
+#calcHashPeriod{
+  font-family: 'Inconsolata', monospace;
+  display: inline-block;
+  width: 60px;
+  vertical-align: middle;
 }
 #calcHashResultsHolder{
-  min-width: 145px;
-  max-width: 145px;
+  min-width: 170px;
+  max-width: 170px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+@media (min-width: 768px) {
+  #calcHashResultsHolder{
+    min-width: 225px;
+    max-width: 225px;
+  }    
 }
 
 /* Mining Ports */
@@ -537,7 +596,11 @@ footer > div{
   vertical-align: middle;
   font-size: 0.95em;
 }
-@media (min-width: 767px) {
+#miningPorts table .col1,
+#miningPorts table .col2 {
+  text-align: center;
+}  
+@media (min-width: 768px) {
   #miningPorts table th {
     white-space: nowrap;
   }
@@ -548,8 +611,18 @@ footer > div{
     width:160px;
     text-align: center;
   }  
-  #miningPorts table .col3 {
-  }  
+}
+
+/* Configuration Generator */
+#configGenerator .form-control,
+#configGenerator .form-select {
+  margin-bottom: 5px;
+}
+#configGenerator .required {
+  color: red;
+}
+#configGenerator #generateConf {
+  margin-top: 10px;
 }
 
 /* Mining Apps */
@@ -560,14 +633,14 @@ footer > div{
   padding-top: 35px;
 }
 #miningApps_rows > tr > td {
-  border-top: none;
+  border-top: none;  
 }
-#miningApps_rows > tr:nth-child(even) > td {
-  border-bottom: 1px solid #e5e5e5;
-  padding-bottom: 20px;
-}
-#miningApps_rows > tr:nth-child(odd) > td {
+#miningApps_rows .appInfo td {
   padding-top: 20px;
+}
+#miningApps_rows .appConfig td {
+  border-bottom: 1px solid #0274a8;
+  padding-bottom: 20px;
 }
 #miningApps_rows {
   margin-top: 10px;
@@ -580,12 +653,13 @@ footer > div{
 #miningApps .miningAppTitle {
   font-weight: bold;
 }
-#miningApps .exampleAddress {
+#miningApps .exampleAddress,
+#miningApps .exampleWorkerName {
   font-style: italic;
 }
 #miningApps .config {
-  color: lightblue;
-  background-color: #3C3C3C;
+  color: #0274a8;
+  background-color: #efefef;
   padding: 2px 10px;
   border-radius: 0;
 }
@@ -604,7 +678,8 @@ footer > div{
 #lookUp > span:nth-child(2) {
   display: none;
 }
-.yourStats {
+.yourStats,
+.yourWorkers {
   display: none;
 }
 #yourAddressDisplay {
@@ -619,12 +694,48 @@ footer > div{
 #addressError {
   color: red;
 }
+#workersReport td {
+  vertical-align: middle;
+}
+#workersReport .status-ok{
+  color: #17a600;
+}
+#workersReport .status-error{
+  color: #a60000;
+}
+#workersReport table .col1,
+#workersReport table .col3,
+#workersReport table .col4,
+#workersReport table .col5 {
+  text-align: center;
+}
+@media (min-width: 768px) {
+  #workersReport table th {
+    white-space: nowrap;
+  }
+  #workersReport table .col1 {
+    width:80px;
+  }
+  #workersReport table .col3 {
+    width:150px;
+  }  
+  #workersReport table .col4 {
+    width: 210px;
+  }
+  #workersReport table .col5 {
+    width: 210px;
+  }
+}
 #workerPayments td {
   vertical-align: middle;
   font-family: 'Inconsolata', monospace;
   font-size: 0.95em;
 }
-@media (min-width: 767px) {
+#workerPayments table .col3,
+#workerPayments table .col4 {
+  text-align: center;
+}
+@media (min-width: 768px) {
   #workerPayments table  {
     table-layout:fixed;
   }  
@@ -640,11 +751,9 @@ footer > div{
   }  
   #workerPayments table .col3 {
     width:130px;
-    text-align: center;
   }  
   #workerPayments table .col4 {
     width: 70px;
-    text-align: center;
   }
 }
 
@@ -660,7 +769,14 @@ footer > div{
   font-family: 'Inconsolata', monospace;
   font-size: 0.95em;
 }
-@media (min-width: 767px) {
+#blocksReport table .col2,
+#blocksReport table .col3,
+#blocksReport table .col4,
+#blocksReport table .col6,
+#blocksReport table .col7 {
+  text-align: center;
+}  
+@media (min-width: 768px) {
   #blocksReport table  {
     table-layout:fixed;
   }  
@@ -672,15 +788,12 @@ footer > div{
   }  
   #blocksReport table .col2 {
     width:80px;
-    text-align: center;
   }  
   #blocksReport table .col3 {
     width:90px;
-    text-align: center;
   }  
   #blocksReport table .col4 {
     width:120px;
-    text-align: center;
   }  
   #blocksReport table .col5 {
     overflow: hidden;
@@ -688,23 +801,30 @@ footer > div{
   }  
   #blocksReport table .col6 {
     width: 55px;
-    text-align: center;
   }  
   #blocksReport table .col7 {
     width: 80px;
-    text-align: center;
   }  
+}
+#blocksReport .pending td{
+  background-color:rgba(255, 255, 255, .3);
+}
+#blocksReport .unlocked td{
+  background-color:rgba(0, 255, 0, .1);
+}
+#blocksReport .orphaned td{
+  background-color:rgba(255, 0, 0, .1);
 }
 #blocksReport .luckGood,
 #blocksReport .unlocked .col7 {
-  color: #5eff5e;
+  color: #17a600;
 }
 #blocksReport .luckBad,
 #blocksReport .orphaned .col7 {
-  color: red;
+  color: #a60000;
 }
 #blocksReport .luckMid {
-  color: #FFF500;
+  color: #df9d00;
 }
 
 /* Payments */
@@ -719,7 +839,13 @@ footer > div{
   font-family: 'Inconsolata', monospace;
   font-size: 0.95em;
 }
-@media (min-width: 767px) {
+#paymentsReport table .col3,
+#paymentsReport table .col4,
+#paymentsReport table .col5,
+#paymentsReport table .col6 {
+  text-align: center;
+}
+@media (min-width: 768px) {
   #paymentsReport table  {
     table-layout:fixed;
   }  
@@ -735,18 +861,14 @@ footer > div{
   }  
   #paymentsReport table .col3 {
     width:130px;
-    text-align: center;
   }  
   #paymentsReport table .col4 {
     width:110px;
-    text-align: center;
   }  
   #paymentsReport table .col5 {
     width: 70px;
-    text-align: center;
   }
   #paymentsReport table .col6 {
     width: 70px;
-    text-align: center;
   }
 }

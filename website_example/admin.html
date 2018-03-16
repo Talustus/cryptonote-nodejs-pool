@@ -2,6 +2,8 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1">
+    
     <title>Mining Pool Admin Panel</title>
     
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
@@ -40,6 +42,15 @@
         </div>
     </div>
 </div>
+
+<!-- Footer -->
+<footer>
+    <div class="text-muted">
+        Powered by <a target="_blank" href="https://github.com/dvandal/cryptonote-nodejs-pool"><i class="fa fa-github"></i> cryptonote-nodejs-pool</a>
+        <span id="poolVersion"></span>
+	<span class="hidden-xs">open sourced under the <a href="http://www.gnu.org/licenses/gpl-2.0.html">GPL</a></span>
+    </div>
+</footer>
 
 <!-- Javascript -->
 <script src="config.js"></script>
@@ -169,7 +180,9 @@ function sortTable() {
 function comparer(index) {
     return function(a, b) {
         var valA = getCellValue(a, index), valB = getCellValue(b, index);
-        return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.localeCompare(valB)
+	if (!valA) { valA = 0; }
+	if (!valB) { valB = 0; }
+        return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB.toString())
     }
 }
 

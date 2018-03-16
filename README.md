@@ -16,8 +16,8 @@ High performance Node.js (with native C addons) mining pool for CryptoNote based
   * [Starting the Pool](#3-start-the-pool)
   * [Host the front-end](#4-host-the-front-end)
   * [Customizing your website](#5-customize-your-website)
+  * [SSL](#ssl)
   * [Upgrading](#upgrading)
-* [How to setup SSL front-end](#how-to-setup-ssl-front-end)
 * [JSON-RPC Commands from CLI](#json-rpc-commands-from-cli)
 * [Monitoring Your Pool](#monitoring-your-pool)
 * [Donations](#donations)
@@ -25,73 +25,90 @@ High performance Node.js (with native C addons) mining pool for CryptoNote based
 * [License](#license)
 
 
-### Features
+Features
+===
 
-#### Basic features
-
+#### Optimized pool server
 * TCP (stratum-like) protocol for server-push based jobs
   * Compared to old HTTP protocol, this has a higher hash rate, lower network/CPU server load, lower orphan
     block percent, and less error prone
 * IP banning to prevent low-diff share attacks
 * Socket flooding detection
-* Payment processing
-  * Splintered transactions to deal with max transaction size
-  * Minimum payment threshold before balance will be paid out
-  * Minimum denomination for truncating payment amount precision to reduce size/complexity of block transactions
-* Detailed logging
-* Ability to configure multiple ports - each with their own difficulty
-* Variable difficulty / share limiter
 * Share trust algorithm to reduce share validation hashing CPU load
 * Clustering for vertical scaling
+* Ability to configure multiple ports - each with their own difficulty
+* Miner login (wallet address) validation
+* Workers identification (specify worker name as the password)
+* Variable difficulty / share limiter
+* Set fixed difficulty on miner client by passing "address" param with "+[difficulty]" postfix
 * Modular components for horizontal scaling (pool server, database, stats/API, payment processing, front-end)
-* Live stats API (using AJAX long polling with CORS)
-  * Currency network/block difficulty
-  * Current block height
-  * Network hashrate
-  * Pool hashrate
-  * Each miners' individual stats (hashrate, shares submitted, pending balance, total paid, etc)
-  * Blocks found (pending, confirmed, and orphaned)
-* An easily extendable, responsive, light-weight front-end using API to display data
+* SSL support for both pool and API servers
+
+#### Live statistics API
+* Currency network/block difficulty
+* Current block height
+* Network hashrate
+* Pool hashrate
+* Each miners' individual stats (hashrate, shares submitted, pending balance, total paid, payout estimate, etc)
+* Blocks found (pending, confirmed, and orphaned)
+* Historic charts of pool's hashrate, miners count and coin difficulty
+* Historic charts of users's hashrate and payments
+
+#### Mined blocks explorer
+* Mined blocks table with block status (pending, confirmed, and orphaned)
+* Blocks luck (shares/difficulty) statistics
+* Universal blocks and transactions explorer based on [chainradar.com](http://chainradar.com)
+
+#### Smart payment processing
+* Splintered transactions to deal with max transaction size
+* Minimum payment threshold before balance will be paid out
+* Minimum denomination for truncating payment amount precision to reduce size/complexity of block transactions
+* Prevent "transaction is too big" error with "payments.maxTransactionAmount" option
+* Option to enable dynamic transfer fee based on number of payees per transaction and option to have miner pay transfer fee instead of pool owner (applied to dynamic fee only)
+* Control transactions priority with config.payments.priority (default: 0).
+* Set payment ID on miner client when using "[address].[paymentID]" login
+* Integrated payment ID addresses support for Exchanges
+
+#### Admin panel
+* Aggregated pool statistics
+* Coin daemon & wallet RPC services stability monitoring
+* Log files data access
+* Users list with detailed statistics
+
+#### Pool stability monitoring
+* Detailed logging in process console & log files
+* Coin daemon & wallet RPC services stability monitoring
+* See logs data from admin panel
 
 #### Extra features
+* An easily extendable, responsive, light-weight front-end using API to display data
+* Onishin's [keepalive function](https://github.com/perl5577/cpuminer-multi/commit/0c8aedb)
+* Support for slush mining system (disabled by default)
+* E-Mail Notifications on worker connected, disconnected (timeout) or banned (support MailGun, SMTP and Sendmail)
 
-* Admin panel
-  * Aggregated pool statistics
-  * Coin daemon & wallet RPC services stability monitoring
-  * Log files data access
-  * Users list with detailed statistics
-* Historic charts of pool's hashrate and miners count, coin difficulty, rates and coin profitability
-* Historic charts of users's hashrate and payments
-* Miner login(wallet address) validation
-* Five configurable CSS themes
-* Universal blocks and transactions explorer based on [chainradar.com](http://chainradar.com)
-* FantomCoin & MonetaVerde support
-* Set fixed difficulty on miner client by passing "address" param with ".[difficulty]" postfix
-* Prevent "transaction is too big" error with "payments.maxTransactionAmount" option
-* Slush mining system support
 
-### Community / Support
+Community / Support
+===
 
 * [GitHub Issues for cryptonote-nodejs-pool](https://github.com/dvandal/cryptonote-nodejs-pool/issues)
 * [CryptoNote Technology](https://cryptonote.org)
 * [CryptoNote Forum](https://forum.cryptonote.org/)
-* [ByteCoin Github](https://github.com/amjuarez/bytecoin)
-* [Monero Github](https://github.com/monero-project/bitmonero)
-* [GRAFT Github](https://github.com/graft-project/GraftNetwork)
-
 
 #### Pools Using This Software
 
-* https://graftpool.ca
+* https://graft.blockhashmining.com/
 
-A pool must be operational for 6 months or more before it can be added to this list.
 
 Usage
 ===
 
 #### Requirements
 * Coin daemon(s) (find the coin's repo and build latest version from source)
-* [Node.js](http://nodejs.org/) v0.10+
+  * [ByteCoin](https://github.com/amjuarez/bytecoin)
+  * [Monero](https://github.com/monero-project/bitmonero)
+  * [GRAFT](https://github.com/graft-project/GraftNetwork)
+* [Node.js](http://nodejs.org/) v4.0+
+  * For Ubuntu: `sudo apt-get install nodejs npm && ln -s /usr/bin/nodejs /usr/bin/node`
 * [Redis](http://redis.io/) key-value store v2.6+ ([follow these instructions](http://redis.io/topics/quickstart))
 * libssl required for the node-multi-hashing module
   * For Ubuntu: `sudo apt-get install libssl-dev`
@@ -116,17 +133,14 @@ Clone the repository and run `npm update` for all the dependencies to be install
 git clone https://github.com/dvandal/cryptonote-nodejs-pool.git pool
 cd pool
 
-nvm install 0.10.48
-nvm use 0.10.48
-nvm alias default 0.10.48
-nvm use default
-
 npm update
 ```
 
 #### 2) Configuration
 
 *Warning for Cryptonote coins other than Monero:* this software may or may not work with any given cryptonote coin. Be wary of altcoins that change the number of minimum coin units because you will have to reconfigure several config values to account for those changes. Unless you're offering a bounty reward - do not open an issue asking for help getting a coin other than Monero working with this software.
+
+Copy the `config_example.json` file to `config.json` then overview each options and change any to match your preferred setup.
 
 Explanation for each field:
 ```javascript
@@ -142,6 +156,10 @@ Explanation for each field:
 /* Coin network time to mine one block, see DIFFICULTY_TARGET constant in DAEMON_CODE/src/cryptonote_config.h */
 "coinDifficultyTarget": 120,
 
+/* Enable/Disable support for monero variants */
+"moneroVariant": false,
+
+/* Logging */
 "logging": {
 
     "files": {
@@ -184,26 +202,36 @@ Explanation for each field:
     /* How many seconds until we consider a miner disconnected. */
     "minerTimeout": 900,
 
+    "sslCert": "./cert.pem", // The SSL certificate
+    "sslKey": "./privkey.pem", // The SSL private key
+    "sslCA": "./chain.pem" // The SSL certificate authority chain
+    
     "ports": [
         {
             "port": 3333, // Port for mining apps to connect to
-            "difficulty": 200, // Initial difficulty miners are set to
+            "difficulty": 2000, // Initial difficulty miners are set to
             "desc": "Low end hardware" // Description of port
         },
         {
-            "port": 5555,
-            "difficulty": 10000,
+            "port": 4444,
+            "difficulty": 15000,
             "desc": "Mid range hardware"
         },
         {
-            "port": 7777,
-            "difficulty": 20000,
+            "port": 5555,
+            "difficulty": 25000,
             "desc": "High end hardware"
         },
         {
-            "port": 9999,
+            "port": 7777,
             "difficulty": 500000,
-            "desc": "Nice Hash"
+            "desc": "Cloud-mining / NiceHash"
+        },
+        {
+            "port": 9999,
+            "difficulty": 20000,
+            "desc": "SSL connection",
+            "ssl": true // Enable SSL
         }
     ],
 
@@ -213,17 +241,21 @@ Explanation for each field:
     "varDiff": {
         "minDiff": 100, // Minimum difficulty
         "maxDiff": 100000000,
-        "targetTime": 100, // Try to get 1 share per this many seconds
+        "targetTime": 60, // Try to get 1 share per this many seconds
         "retargetTime": 30, // Check to see if we should retarget every this many seconds
-        "variancePercent": 30, // Allow time to very this % from target without retargeting
-        "maxJump": 100 // Limit diff percent increase/decrease in a single retargetting
+        "variancePercent": 30, // Allow time to vary this % from target without retargeting
+        "maxJump": 100 // Limit diff percent increase/decrease in a single retargeting
     },
 
-    /* Set difficulty on miner client side by passing <address> param with .<difficulty> postfix
-       minerd -u GBqRuitSoU3PFPBAkXMEnLdBRWXH4iDSD6RDxnQiEFjVJhWUi1UuqfV5EzosmaXgpPGE6JJQjMYhZZgWY8EJQn8jQTsuTit.5000 */
+    /* Set payment ID on miner client side by passing <address>.<paymentID> */
+    "paymentId": {
+        "addressSeparator": "." // Character separator between <address> and <paymentID>
+    },
+	
+    /* Set difficulty on miner client side by passing <address> param with +<difficulty> postfix */
     "fixedDiff": {
         "enabled": true,
-        "separator": ".", // Character separator between <address> and <difficulty>
+        "separator": "+", // Character separator between <address> and <difficulty>
     },
 
     /* Feature to trust share difficulties from miners which can
@@ -260,7 +292,10 @@ Explanation for each field:
     "interval": 300, // How often to run in seconds
     "maxAddresses": 50, // Split up payments if sending to more than this many addresses
     "mixin": 5, // Number of transactions yours is indistinguishable from
+    "priority": 0, // The transaction priority    
     "transferFee": 4000000000, // Fee to pay for each transaction
+    "dynamicTransferFee": true, // Enable dynamic transfer fee (fee is multiplied by number of miners)
+    "minerPayFee" : true, // Miner pays the transfer fee instead of pool owner when using dynamic transfer fee
     "minPayment": 100000000000, // Miner balance required before sending payment
     "maxTransactionAmount": 0, // Split transactions by this amount (to prevent "too big transaction" error)
     "denomination": 10000000000 // Truncate to this precision and store remainder
@@ -285,10 +320,16 @@ Explanation for each field:
     "enabled": true,
     "hashrateWindow": 600, // How many second worth of shares used to estimate hash rate
     "updateInterval": 3, // Gather stats and broadcast every this many seconds
-    "port": 8117,
+    "port": 8117, // The API port
     "blocks": 30, // Amount of blocks to send at a time
     "payments": 30, // Amount of payments to send at a time
-    "password": "your_password" // Password required for admin stats
+    "password": "your_password", // Password required for admin stats
+    "ssl": false, // Enable SSL API
+    "sslPort": 8119, // The SSL port
+    "sslCert": "./cert.pem", // The SSL certificate
+    "sslKey": "./privkey.pem", // The SSL private key
+    "sslCA": "./chain.pem", // The SSL certificate authority chain
+    "trustProxyIP": false // Proxy X-Forwarded-For support
 },
 
 /* Coin daemon connection details (default port is 18981) */
@@ -310,6 +351,42 @@ Explanation for each field:
     "auth": null // If set, client will run redis auth command on connect. Use for remote db
 }
 
+/* Email Notifications */
+"email": {
+    "enabled": false,
+    "templateDir": "email_templates", // The templates folder
+    "templates": ["worker_connected", "worker_banned", "worker_timeout"], // Specify which templates to enable
+    "variables": { // The variables to replace in templates
+        "POOL_HOST": "poolhost.com" // Your pool domain
+    },
+    "fromAddress": "your@email.com", // Your sender email
+    "transport": "sendmail", // The transport mode (sendmail, smtp or mailgun)
+    
+    // Configuration for sendmail transport
+    // Documentation: http://nodemailer.com/transports/sendmail/
+    "sendmail": {
+        "path": "/usr/sbin/sendmail" // The path to sendmail command
+    },
+    
+    // Configuration for SMTP transport
+    // Documentation: http://nodemailer.com/smtp/
+    "smtp": {
+        "host": "smtp.example.com", // SMTP server
+        "port": 587, // SMTP port (25, 587 or 465)
+        "secure": false, // TLS (if false will upgrade with STARTTLS)
+        "auth": {
+            "user": "username", // SMTP username
+            "pass": "password" // SMTP password
+        }
+    },
+    
+    // Configuration for MailGun transport
+    "mailgun": {
+        "key": "your-private-key", // Your MailGun Private API key
+        "domain": "mg.yourdomain" // Your MailGun domain
+    }
+},
+    
 /* Monitoring RPC services. Statistics will be displayed in Admin panel */
 "monitoring": {
     "daemon": {
@@ -320,7 +397,14 @@ Explanation for each field:
         "checkInterval": 60,
         "rpcMethod": "getbalance"
     }
+},
 
+/* Prices settings for market and price charts */
+"prices": {
+    "source": "cryptonator", // Price source (cryptonator or tradeogre)
+    "currency": "USD" // Default currency
+},
+	    
 /* Collect pool statistics to display in frontend charts  */
 "charts": {
     "pool": {
@@ -341,7 +425,20 @@ Explanation for each field:
             "updateInterval": 1800,
             "stepInterval": 10800,
             "maximumPeriod": 604800
+        },
+        "price": {
+            "enabled": true,
+            "updateInterval": 1800,
+            "stepInterval": 10800,
+            "maximumPeriod": 604800
+        },
+        "profit": {
+            "enabled": true,
+            "updateInterval": 1800,
+            "stepInterval": 10800,
+            "maximumPeriod": 604800
         }
+
     },
     "user": { // Chart data displayed in user stats block
         "hashrate": {
@@ -387,10 +484,10 @@ node init.js -module=api
 
 #### 4) Host the front-end
 
-Simply host the contents of the `website` directory on file server capable of serving simple static files.
+Simply host the contents of the `website_example` directory on file server capable of serving simple static files.
 
 
-Edit the variables in the `website/config.js` file to use your pool's specific configuration.
+Edit the variables in the `website_example/config.js` file to use your pool's specific configuration.
 Variable explanations:
 
 ```javascript
@@ -409,6 +506,12 @@ var telegram = "https://t.me/YourPool";
 
 /* Pool Discord URL */
 var discord = "https://discordapp.com/invite/YourPool";
+
+/* Market stat display params from https://www.cryptonator.com/widget */
+var cryptonatorWidget = ["{symbol}-BTC", "{symbol}-USD", "{symbol}-EUR", "{symbol}-CAD"];
+
+/* Default currency used by Estimate Mining Profit tool */
+var defaultCurrency = 'USD';
 
 /* Used for front-end block links. */
 var blockchainExplorer = "http://chainradar.com/{symbol}/block/{id}";
@@ -431,20 +534,29 @@ to `index.html` or other front-end files thus reducing the difficulty of merging
 
 Then simply serve the files via nginx, Apache, Google Drive, or anything that can host static content.
 
+#### SSL
 
-#### Upgrading
-When updating to the latest code its important to not only `git pull` the latest from this repo, but to also update
-the Node.js modules, and any config files that may have been changed.
-* Inside your pool directory (where the init.js script is) do `git pull` to get the latest code.
-* Remove the dependencies by deleting the `node_modules` directory with `rm -r node_modules`.
-* Run `npm update` to force updating/reinstalling of the dependencies.
-* Compare your `config.json` to the latest example ones in this repo or the ones in the setup instructions where each config field is explained. You may need to modify or add any new changes.
+You can configure the API to be accessible via SSL using various methods. Find an example for nginx below:
 
-### How to setup SSL front-end
+* Using SSL api in `config.json`:
 
-If you want to secure your front-end behind a SSL certificate you will need to forward a subdomain to the API port, for example *api.poolhost.com*
+By using this you will need to update your `api` variable in the `website_example/config.js`. For example:  
+`var api = "https://poolhost:8119";`
 
-Here is a sample configuration with NGINX:
+* Inside your SSL Listener, add the following:
+
+``` javascript
+location ~ ^/api/(.*) {
+    proxy_pass http://127.0.0.1:8117/$1$is_args$args;
+}
+```
+
+By adding this you will need to update your `api` variable in the `website_example/config.js` to include the /api. For example:  
+`var api = "http://poolhost/api";`
+
+You no longer need to include the port in the variable because of the proxy connection.
+
+* Using his own subdomain, for example `api.poolhost.com`:
 
 ```bash
 server {
@@ -466,11 +578,19 @@ server {
 }
 ```
 
-You will need to edit the `api` variable in the `website/config.js` file and set your pool API url, for example:
+By adding this you will need to update your `api` variable in the `website_example/config.js`. For example:  
+`var api = "//api.poolhost.com";`
 
-```javascript
-var api = "https://api.poolhost.com";
-```
+You no longer need to include the port in the variable because of the proxy connection.
+
+
+#### Upgrading
+When updating to the latest code its important to not only `git pull` the latest from this repo, but to also update
+the Node.js modules, and any config files that may have been changed.
+* Inside your pool directory (where the init.js script is) do `git pull` to get the latest code.
+* Remove the dependencies by deleting the `node_modules` directory with `rm -r node_modules`.
+* Run `npm update` to force updating/reinstalling of the dependencies.
+* Compare your `config.json` to the latest example ones in this repo or the ones in the setup instructions where each config field is explained. You may need to modify or add any new changes.
 
 ### JSON-RPC Commands from CLI
 
@@ -502,7 +622,7 @@ Donations
 * GRFT: `GBqRuitSoU3PFPBAkXMEnLdBRWXH4iDSD6RDxnQiEFjVJhWUi1UuqfV5EzosmaXgpPGE6JJQjMYhZZgWY8EJQn8jQTsuTit`
 
 Credits
-===
+---------
 
 * [fancoder](//github.com/fancoder) - Developper on cryptonote-universal-pool project from which current project is forked.
 
